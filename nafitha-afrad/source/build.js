@@ -67,9 +67,15 @@ const MARK = A('logo_mark.png'); // 330x333
 const MARK_NAVY = A('logo_mark_navy.png');
 const MARK_WHITE = A('logo_mark_white.png');
 const MR = 333 / 330;
+// entity logos, in the required order: RCJY, then Jabeen, then Rqeem
+const LOGOS = [
+  { path: A('logo_rcjy.png'), w: 1141, h: 865, alt: 'شعار الهيئة الملكية للجبيل وينبع' },
+  { path: A('logo_jabeen.png'), w: 480, h: 336, alt: 'شعار جبين' },
+  { path: A('logo_rqeem.png'), w: 607, h: 415, alt: 'شعار رقيم للحلول الذكية' },
+];
 const CITY = {
   jubail: { img: A('city_jubail.png'), w: 149, h: 148 },
-  raskhair: { img: A('city_raskhair.png'), w: 211, h: 141 },
+  raskhair: { img: A('city_raskhair.png'), w: 228, h: 141 },
   yanbu: { img: A('city_yanbu.png'), w: 138, h: 138 },
   jazan: { img: A('city_jazan.png'), w: 132, h: 132 },
 };
@@ -110,17 +116,16 @@ function circleIcon(slide, x, y, d, data, bg, step, pad = 0.26) {
     I(s, { path: MARK, x: (W - lw) / 2, y: 0.7, w: lw, h: lw * MR, step: 1 });
     T(s, 'نافذة أفراد', { x: 2, y: 3.05, w: W - 4, h: 1.1, fontSize: 54, bold: true, color: NAVY, align: 'center', valign: 'middle', step: 2 });
     T(s, 'نافذة رقمية واحدة إلى خدمات المدينة وأماكنها وفعالياتها', { x: 2, y: 4.15, w: W - 4, h: 0.6, fontSize: 20, color: MUTED, align: 'center', valign: 'middle', step: 3 });
-    // entity marks, right to left: RCJY, then JABEEN, then RAQEEM
-    const ents = [
-      ['الهيئة الملكية للجبيل وينبع', 'LOGO_RCJY'],
-      ['جبين', 'LOGO_JABEEN'],
-      ['رقيم للحلول الذكية', 'LOGO_RAQEEM'],
-    ];
-    const bw = 3.0, gap = 0.35, total = 3 * bw + 2 * gap;
-    ents.forEach(([name], i) => {
-      const x = (W + total) / 2 - bw - i * (bw + gap);
-      S(s, pres.shapes.ROUNDED_RECTANGLE, { x, y: 5.75, w: bw, h: 0.85, rectRadius: 0.12, fill: { color: WHITE }, line: { color: LINE, width: 1 }, step: 4 });
-      T(s, name, { x: x + 0.1, y: 5.75, w: bw - 0.2, h: 0.85, fontSize: 14, bold: true, color: NAVY, align: 'center', valign: 'middle', step: 4 });
+    // entity logos, right to left: RCJY, then Jabeen, then Rqeem
+    const lh = 0.95, lgap = 1.1;
+    const lws = LOGOS.map((l) => (lh * l.w) / l.h);
+    const total = lws.reduce((a, b) => a + b, 0) + lgap * (LOGOS.length - 1);
+    let lx = (W + total) / 2;
+    LOGOS.forEach((l, i) => {
+      lx -= lws[i];
+      I(s, { path: l.path, x: lx, y: 5.55, w: lws[i], h: lh, altText: l.alt, step: 4 });
+      if (i < LOGOS.length - 1) S(s, pres.shapes.LINE, { x: lx - lgap / 2, y: 5.65, w: 0, h: lh - 0.2, line: { color: LINE, width: 1 }, step: 4 });
+      lx -= lgap;
     });
     s.addNotes('نرحب بكم في حفل تدشين تطبيق نافذة أفراد. التطبيق نافذة رقمية واحدة يصل منها السكان والزوار إلى خدمات المدينة وأماكنها وفعالياتها. وهو ثمرة عمل مشترك بين الهيئة الملكية للجبيل وينبع، وشركة جبين، وشركة رقيم للحلول الذكية التي طوّرت التطبيق.');
   }
@@ -242,7 +247,9 @@ function circleIcon(slide, x, y, d, data, bg, step, pad = 0.26) {
       T(s, hex, { x: x + 0.4, y: y + 1.2, w: pw - 0.8, h: 0.5, fontSize: 20, color: WHITE, step: i + 1 });
       T(s, desc, { x: x + 0.4, y: y + 1.75, w: pw - 0.8, h: 0.45, fontSize: 16, color: WHITE, step: i + 1 });
     });
-    T(s, 'اللونان مأخوذان من شعار الهيئة الملكية للجبيل وينبع: الأزرق لنافذة أفراد، والأخضر لنافذة أعمال', { x: M, y: 5.85, w: W - 2 * M, h: 0.45, fontSize: 15, color: INK, step: 3 });
+    const rl = LOGOS[0], rh = 0.62, rw = (rh * rl.w) / rl.h;
+    I(s, { path: rl.path, x: W - M - rw, y: 5.8, w: rw, h: rh, altText: rl.alt, step: 3 });
+    T(s, 'اللونان مأخوذان من شعار الهيئة الملكية للجبيل وينبع: الأزرق لنافذة أفراد، والأخضر لنافذة أعمال', { x: M, y: 5.8, w: W - 2 * M - rw - 0.25, h: rh, fontSize: 15, color: INK, valign: 'middle', step: 3 });
     s.addNotes('اخترنا الألوان من شعار الهيئة الملكية للجبيل وينبع لتبقى الهوية امتدادًا لهوية الهيئة. الأزرق الداكن لنافذة أفراد ويعبّر عن الثقة، والأخضر مخصص لنافذة أعمال.');
   }
 
@@ -469,7 +476,11 @@ function circleIcon(slide, x, y, d, data, bg, step, pad = 0.26) {
     S(s, pres.shapes.ROUNDED_RECTANGLE, { x: qx, y: qy, w: qs, h: qs, rectRadius: 0.2, fill: { color: WHITE }, line: { color: NAVY, width: 1.5 }, objectName: 'QR_CODE', step: 2 });
     I(s, { data: await icon('FaQrcode', NAVY), x: qx + 0.55, y: qy + 0.55, w: qs - 1.1, h: qs - 1.1, step: 2 });
     T(s, 'امسح الرمز لتحميل التطبيق', { x: qx - 0.3, y: qy + qs + 0.2, w: qs + 0.6, h: 0.45, fontSize: 15, bold: true, color: NAVY, align: 'center', step: 2 });
-    T(s, 'تطوير شركة رقيم للحلول الذكية', { x: 2, y: 6.55, w: W - 4, h: 0.45, fontSize: 14, color: MUTED, align: 'center', step: 4 });
+    {
+      const ql = LOGOS[2], qh = 0.7, qw = (qh * ql.w) / ql.h;
+      I(s, { path: ql.path, x: (W - qw) / 2, y: 5.75, w: qw, h: qh, altText: ql.alt, step: 4 });
+      T(s, 'تطوير شركة رقيم للحلول الذكية', { x: 3, y: 6.55, w: W - 6, h: 0.4, fontSize: 14, color: MUTED, align: 'center', valign: 'middle', step: 4 });
+    }
     s.addNotes('بهذا نعلن تدشين تطبيق نافذة أفراد. يمكنكم تحميله الآن بمسح الرمز على الشاشة. نشكر الهيئة الملكية للجبيل وينبع وشركة جبين على دعمهما، والتطبيق من تطوير شركة رقيم للحلول الذكية.');
   }
 
