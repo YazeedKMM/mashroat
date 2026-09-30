@@ -60,7 +60,7 @@ for item in zin.infolist():
         # shapes with text/fill (p:sp) get a bldP entry; pictures do not
         for m in re.finditer(r'<p:sp>\s*<p:nvSpPr>\s*<p:cNvPr id="(\d+)"', xml):
             SP_IDS.add(m.group(1))
-        for m in re.finditer(r'<p:cNvPr id="(\d+)" name="anim(\d+)_\d+"', xml):
+        for m in re.finditer(r'<p:cNvPr id="(\d+)" name="anim(\d+)_\d+[^"]*"', xml):
             steps.setdefault(int(m.group(2)), []).append(m.group(1))
         extra = TRANSITION + (timing_xml(steps) if steps else '')
         if '</p:clrMapOvr>' in xml:
